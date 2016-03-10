@@ -1,4 +1,4 @@
-#!/bin/env python
+#!/usr/bin/env python3
 
 """
 Command line utility to extract basic statistics from a gpx file
@@ -19,6 +19,9 @@ import gpxpy as mod_gpxpy
 
 
 def format_time(time_s):
+    """
+    return time as a readable string in format hh:mm:ss
+    """
     if not time_s:
         return 'n/a'
     minutes = mod_math.floor(time_s / 60.)
@@ -29,7 +32,7 @@ def format_time(time_s):
 
 def print_gpx_part_info(gpx_part, indentation='    '):
     """
-    gpx_part may be a track or segment.
+    Print statistic information of a file, track or segment.
     """
     length_2d = gpx_part.length_2d()
     length_3d = gpx_part.length_3d()
@@ -67,6 +70,9 @@ def print_gpx_part_info(gpx_part, indentation='    '):
 
 
 def print_gpx_info(gpx, gpx_file):
+    """
+    Print statistic of a gpx file.
+    """
     print('File: %s' % gpx_file)
 
     if gpx.name:
@@ -78,10 +84,15 @@ def print_gpx_info(gpx, gpx_file):
     if gpx.author_email:
         print('  Email: %s' % gpx.author_email)
 
+    #Print global information for the gpx file
     print_gpx_part_info(gpx)
 
+    #Iterate over each track of the gpx file
     for track_no, track in enumerate(gpx.tracks):
+        if track.name:
+            print('    Track name: %s' % track.name)
         for segment_no, segment in enumerate(track.segments):
+            #Dump information for this segment
             print('    Track #%s, Segment #%s' % (track_no, segment_no))
             print_gpx_part_info(segment, indentation='        ')
 
