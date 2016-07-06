@@ -16,11 +16,7 @@
 
 from __future__ import print_function
 
-import pdb
-
-import re as mod_re
 import logging as mod_logging
-import datetime as mod_datetime
 import xml.dom.minidom as mod_minidom
 
 try:
@@ -169,12 +165,17 @@ class GPXParser:
 
     def init(self, xml_or_file):
         text = xml_or_file.read() if hasattr(xml_or_file, 'read') else xml_or_file
+        if text[:3] == "\xEF\xBB\xBF": #Remove utf-8 Byte Order Mark (BOM) if present
+            text = text[3:]
         self.xml = mod_utils.make_str(text)
         self.gpx = mod_gpx.GPX()
 
-    def parse(self):
+    def parse(self, version = None):
         """
         Parses the XML file and returns a GPX object.
+
+        version may be '1.0', '1.1' or None (then it will be read from the gpx
+        xml node if possible, if not then version 1.0 will be used).
 
         It will throw GPXXMLSyntaxException if the XML file is invalid or
         GPXException if the XML file is valid but something is wrong with the
@@ -193,7 +194,7 @@ class GPXParser:
             else:
                 raise mod_gpx.GPXException('Invalid parser type: %s' % self.xml_parser_type)
 
-            self.__parse_dom()
+            self.__parse_dom(version)
 
             return self.gpx
         except Exception as e:
@@ -210,12 +211,13 @@ class GPXParser:
             # it is available with GPXXMLSyntaxException.original_exception:
             raise mod_gpx.GPXXMLSyntaxException('Error parsing XML: %s' % str(e), e)
 
-    def __parse_dom(self):
+    def __parse_dom(self, version = None):
         node = self.xml_parser.get_first_child(name='gpx')
 
         if node is None:
             raise mod_gpx.GPXException('Document must have a `gpx` root node.')
 
-        version = self.xml_parser.get_node_attribute(node, 'version')
+        if version is None:
+            version = self.xml_parser.get_node_attribute(node, 'version')
 
         mod_gpxfield.gpx_fields_from_xml(self.gpx, self.xml_parser, node, version)

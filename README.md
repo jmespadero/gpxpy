@@ -1,3 +1,6 @@
+[![Build Status](https://api.travis-ci.org/tkrajina/gpxpy.svg)](https://travis-ci.org/tkrajina/gpxpy)
+[![Coverage Status](https://coveralls.io/repos/github/tkrajina/gpxpy/badge.svg?branch=master)](https://coveralls.io/github/tkrajina/gpxpy?branch=master)
+
 gpxpy -- GPX file parser
 ========================
 
@@ -68,7 +71,7 @@ GPX Version:
 
 gpx.py can parse and generate GPX 1.0 and 1.1 files. Note that the generated file will always be a valid XML document, but it may not be (strictly speaking) a valid GPX document. For example, if you set gpx.email to "my.email AT mail.com" the generated GPX tag won't confirm to the regex pattern. And the file won't be valid. Most applications will ignore such errors, but... Be aware of this!
 
-WARNING: The only part of the GPX standard which is not completely implenmented are GPX extensions. The API for GPX extensions will change in future versions!!!
+WARNING: The only part of the GPX standard which is not completely implemented are GPX extensions. The API for GPX extensions will change in future versions!!!
 
 XML parsing
 -----------
@@ -76,6 +79,8 @@ XML parsing
 If lxml is available, then it will be used for XML parsing.
 Otherwise minidom is used.
 Note that lxml is 2-3 times faster so, if you can choose -- use it :)
+
+The GPX version is automatically determined when parsing by reading the version attribute in the gpx node. If this attribute is not present then the version is assumed to be 1.0. A specific version can be forced by setting the `version` parameter in the parse function. Possible values for the 'version' parameter are `1.0`, `1.1` and `None`.
 
 Pull requests
 -------------

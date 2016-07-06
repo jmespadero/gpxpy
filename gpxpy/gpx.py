@@ -18,8 +18,6 @@
 GPX related stuff
 """
 
-import pdb
-
 import logging as mod_logging
 import math as mod_math
 import collections as mod_collections
@@ -830,7 +828,6 @@ class GPXTrackSegment:
             # Won't compute max_speed for first and last because of common GPS
             # recording errors, and because smoothing don't work well for those
             # points:
-            first_or_last = i in [0, 1, len(self.points) - 1]
             if point.time and previous.time:
                 timedelta = point.time - previous.time
 
@@ -2619,10 +2616,6 @@ class GPX:
         content = mod_gpxfield.gpx_fields_to_xml(self, 'gpx', version, custom_attributes=xml_attributes)
 
         return '<?xml version="1.0" encoding="UTF-8"?>\n' + content.strip()
-
-    def smooth(self, vertical=True, horizontal=False, remove_extremes=False):
-        for track in self.tracks:
-            track.smooth(vertical, horizontal, remove_extremes)
 
     def has_times(self):
         """ See GPXTrackSegment.has_times() """

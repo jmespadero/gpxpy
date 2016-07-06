@@ -34,12 +34,14 @@ def parse_time(string):
         string = string.replace('T', ' ')
     if 'Z' in string:
         string = string.replace('Z', '')
+    if '.' in string:
+        string = string.split('.')[0]
     for date_format in mod_gpx.DATE_FORMATS:
         try:
             return mod_datetime.datetime.strptime(string, date_format)
-        except ValueError as e:
+        except ValueError:
             pass
-    raise GPXException('Invalid time: %s' % string)
+    raise mod_gpx.GPXException('Invalid time: %s' % string)
 
 
 # ----------------------------------------------------------------------------------------------------
@@ -61,19 +63,10 @@ class IntConverter:
 
 class TimeConverter:
     def from_string(self, string):
-        from . import gpx as mod_gpx
-        if not string:
+        try:
+            return parse_time(string)
+        except:
             return None
-        if 'T' in string:
-            string = string.replace('T', ' ')
-        if 'Z' in string:
-            string = string.replace('Z', '')
-        for date_format in mod_gpx.DATE_FORMATS:
-            try:
-                return mod_datetime.datetime.strptime(string, date_format)
-            except ValueError as e:
-                pass
-        return None
     def to_string(self, time):
         from . import gpx as mod_gpx
         return time.strftime(mod_gpx.DATE_FORMAT) if time else None
@@ -110,7 +103,8 @@ class GPXField(AbstractGPXField):
         AbstractGPXField.__init__(self)
         self.name = name
         if tag and attribute:
-            raise GPXException('Only tag *or* attribute may be given!')
+            from . import gpx as mod_gpx
+            raise mod_gpx.GPXException('Only tag *or* attribute may be given!')
         if attribute:
             self.tag = None
             self.attribute = name if attribute is True else attribute
@@ -134,7 +128,7 @@ class GPXField(AbstractGPXField):
         if result is None:
             if self.mandatory:
                 from . import gpx as mod_gpx
-                raise mod_gpx.GPXException('%s is mandatory in %s' % (self.name, self.tag))
+                raise mod_gpx.GPXException('%s is mandatory in %s (got %s)' % (self.name, self.tag, result))
             return None
 
         if self.type_converter:
@@ -152,7 +146,7 @@ class GPXField(AbstractGPXField):
         return result
 
     def to_xml(self, value, version):
-        if not value:
+        if value is None:
             return ''
 
         if self.attribute:
@@ -262,7 +256,7 @@ class GPXExtensionsField(AbstractGPXField):
         return result
 
     def to_xml(self, value, version):
-        if value is None or not value:
+        if not value:
             return ''
 
         result = '\n<' + self.tag + '>'
@@ -305,7 +299,7 @@ def gpx_fields_to_xml(instance, tag, version, custom_attributes=None):
             value = getattr(instance, gpx_field.name)
             if gpx_field.attribute:
                 body += ' ' + gpx_field.to_xml(value, version)
-            elif value:
+            elif value is not None:
                 if tag_open:
                     body += '>'
                     tag_open = False
