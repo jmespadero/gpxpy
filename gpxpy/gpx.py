@@ -2556,7 +2556,7 @@ class GPX:
             time_dist_after = (interval[-1].time_difference(end),
                                interval[-1].distance_3d(end))
 
-            # Assemble list of times and distance to neighboring points
+            # Assemble list of times and distance to neighbour points
             times_dists = [(interval[i].time_difference(interval[i+1]),
                             interval[i].distance_3d(interval[i+1]))
                             for i in range(len(interval) - 1)]
@@ -2607,11 +2607,11 @@ class GPX:
             self.creator = 'gpx.py -- https://github.com/tkrajina/gpxpy'
 
         v = version.replace('.', '/')
-        xml_attributes = {
-                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-                'xmlns': 'http://www.topografix.com/GPX/%s' % v,
-                'xsi:schemaLocation': 'http://www.topografix.com/GPX/%s http://www.topografix.com/GPX/%s/gpx.xsd' % (v, v)
-        }
+        xml_attributes = (
+                ('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance'),
+                ('xmlns', 'http://www.topografix.com/GPX/%s' % v),
+                ('xsi:schemaLocation', 'http://www.topografix.com/GPX/%s http://www.topografix.com/GPX/%s/gpx.xsd' % (v, v))
+        )
 
         content = mod_gpxfield.gpx_fields_to_xml(self, 'gpx', version, custom_attributes=xml_attributes)
 
