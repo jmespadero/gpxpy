@@ -255,6 +255,23 @@ class GPXWaypoint(mod_geo.Location):
         """
         return max(self.horizontal_dilution, self.vertical_dilution, self.position_dilution)
 
+    def adjust_time(self, delta):
+        """
+        Adjusts the time of the waypoint by the specified delta
+
+        Parameters
+        ----------
+        delta : datetime.timedelta
+            Positive time delta will adjust time into the future
+            Negative time delta will adjust time into the past
+        """
+        if self.time:
+            self.time += delta
+
+    def remove_time(self):
+        """ Will remove time metadata. """
+        self.time = None
+
     def __hash__(self):
         return mod_utils.hash_object(self, self.__slots__)
 
@@ -2032,11 +2049,15 @@ class GPX:
             self.time += delta
         for track in self.tracks:
             track.adjust_time(delta)
+        for waypoint in self.waypoints:
+            waypoint.adjust_time(delta)
 
     def remove_time(self):
         """ Removes time data. """
         for track in self.tracks:
             track.remove_time()
+        for waypoint in self.waypoints:
+            waypoint.remove_time()
 
     def remove_elevation(self, tracks=True, routes=False, waypoints=False):
         """ Removes elevation data. """
