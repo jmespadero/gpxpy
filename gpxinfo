@@ -66,6 +66,7 @@ def print_gpx_part_info(gpx_part, indentation='    '):
     print('%sStopped time: %s' % (indentation, format_time(stopped_time)))
     #print('%sStopped distance: %s' % (indentation, format_short_length(stopped_distance)))
     print('%sMax speed: %s' % (indentation, format_speed(max_speed)))
+    print('%sAvg speed: %s' % (indentation, format_speed(moving_distance / moving_time) if moving_time > 0 else "?"))
 
     uphill, downhill = gpx_part.get_uphill_downhill()
     print('%sTotal uphill: %s' % (indentation, format_short_length(uphill)))

@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/tkrajina/gpxpy.svg)](https://travis-ci.org/tkrajina/gpxpy)
+[![Build Status](https://travis-ci.org/tkrajina/gpxpy.svg?branch=master)](https://travis-ci.org/tkrajina/gpxpy)
 [![Coverage Status](https://coveralls.io/repos/github/tkrajina/gpxpy/badge.svg?branch=master)](https://coveralls.io/github/tkrajina/gpxpy?branch=master)
 
 # gpxpy -- GPX file parser
@@ -27,15 +27,15 @@ gpx = gpxpy.parse(gpx_file)
 for track in gpx.tracks:
     for segment in track.segments:
         for point in segment.points:
-            print 'Point at ({0},{1}) -> {2}'.format(point.latitude, point.longitude, point.elevation)
+            print('Point at ({0},{1}) -> {2}'.format(point.latitude, point.longitude, point.elevation))
 
 for waypoint in gpx.waypoints:
-    print 'waypoint {0} -> ({1},{2})'.format(waypoint.name, waypoint.latitude, waypoint.longitude)
-    
+    print('waypoint {0} -> ({1},{2})'.format(waypoint.name, waypoint.latitude, waypoint.longitude))
+
 for route in gpx.routes:
-    print 'Route:'
+    print('Route:')
     for point in route.points:
-        print 'Point at ({0},{1}) -> {2}'.format(point.latitude, point.longitude, point.elevation)
+        print('Point at ({0},{1}) -> {2}'.format(point.latitude, point.longitude, point.elevation))
 
 # There are many more utility methods and functions:
 # You can manipulate/add/remove tracks, segments, points, waypoints and routes and
@@ -63,18 +63,20 @@ gpx_segment.points.append(gpxpy.gpx.GPXTrackPoint(2.1236, 5.1236, elevation=1236
 
 # You can add routes and waypoints, too...
 
-print 'Created GPX:', gpx.to_xml()
+print('Created GPX:', gpx.to_xml())
 ```
 
 ## GPX Version:
 
 gpx.py can parse and generate GPX 1.0 and 1.1 files. Note that the generated file will always be a valid XML document, but it may not be (strictly speaking) a valid GPX document. For example, if you set gpx.email to "my.email AT mail.com" the generated GPX tag won't confirm to the regex pattern. And the file won't be valid. Most applications will ignore such errors, but... Be aware of this!
 
-WARNING: The only part of the GPX standard which is not completely implemented are GPX extensions. The API for GPX extensions will change in future versions!!!
-
 Be aware that the gpxpy object model *is not 100% equivalent* with the underlying GPX XML file schema. That's because the library object model works with both GPX 1.0 and 1.1.
 
-For example, the GPX 1.0 specified a `speed` attribute for every track point, but that was removed in GPX 1.1. If you parse GPX 1.0 and serialize back with `gpx.to_xml()` everything will work fine. But if you have a GPX 1.1 object, changes in the `speed` attribute will be lost after `gpx.to_xml()`. If you want to force using 1.0, you can `gpx.to_xml(version="1.0")`. Another possibility is to use `extensions` to save the speed in GPX 1.1.
+For example, GPX 1.0 specified a `speed` attribute for every track point, but that was removed in GPX 1.1. If you parse GPX 1.0 and serialize back with `gpx.to_xml()` everything will work fine. But if you have a GPX 1.1 object, changes in the `speed` attribute will be lost after `gpx.to_xml()`. If you want to force using 1.0, you can `gpx.to_xml(version="1.0")`. Another possibility is to use `extensions` to save the speed in GPX 1.1.
+
+## GPX extensions
+
+gpx.py preserves GPX extensions. They are stored as [ElementTree](https://docs.python.org/2/library/xml.etree.elementtree.html#module-xml.etree.ElementTree) DOM objects. Extensions are part of GPX 1.1, and will be ignored when serializing a GPX object in a GPX 1.0 file.
 
 ## XML parsing
 
@@ -86,34 +88,24 @@ The GPX version is automatically determined when parsing by reading the version 
 
 ## Pull requests
 
-OK, so you found a bug and fixed it. Before sending a pull request -- check that all tests are OK with Python 2.6+ and Python 3+.
+OK, so you found a bug and fixed it. Before sending a pull request -- check that all tests are OK with Python 2.7 and Python 3.4+.
 
 Run all tests with:
 
     $ python -m unittest test
     $ python3 -m unittest test
 
-Run only minidom parser tests with:
-
-    $ python -m unittest test.MinidomTests
-    $ python3 -m unittest test.MinidomTests
-
-Run only lxml parser tests with:
-
-    $ python -m unittest test.LxmlTests
-    $ python3 -m unittest test.LxmlTests
-
 Run a single test with:
 
-    $ python -m unittest test.LxmlTests.test_method
-    $ python3 -m unittest test.LxmlTests.test_method
+    $ python -m unittest test.GPXTests.test_haversine_and_nonhaversine
+    $ python3 -m unittest test.GPXTests.test_haversine_and_nonhaversine
 
 ## GPXInfo
 
 The repository contains a little command line utility to extract basic statistics from a file.
 Example usage:
 
-    $ gpxinfo voznjica.gpx 
+    $ gpxinfo voznjica.gpx
     File: voznjica.gpx
       Length 2D: 63.6441229018
       Length 3D: 63.8391428454

@@ -6,6 +6,7 @@ tmp_*.py
 q.py
 tags
 xsd/*.xsd
+.cache/*
 
 *.py[cod]
 
@@ -34,6 +35,7 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+htmlcov/
 
 # Translations
 *.mo
@@ -45,6 +47,9 @@ nosetests.xml
 
 # PyCharm
 .idea
+
+# vscode
+.vscode
 
 pyenv/*
 validation_gpx10.gpx
